@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field, unused_local_variable, unused_element
+// ignore_for_file: unused_field, unused_local_variable, unused_element, prefer_final_fields
 
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -10,17 +10,24 @@ void main() {
 }
 
 // Choices of possible moves
-enum Move { rock, paper, scissors }
+enum Move {
+  rock('✊'),
+  paper('🖐️'),
+  scissors('✌️');
+
+  final String symbol;
+  const Move(this.symbol);
+}
 
 // Fucntion to get the result(outcome) of the game
 String getOutcome(Move player, Move computer) {
-  if (player == computer) return "It's a tie!";
+  if (player == computer) return "It's a tie! 🤝";
   if ((player == Move.rock && computer == Move.scissors) ||
       (player == Move.scissors && computer == Move.paper) ||
       (player == Move.paper && computer == Move.rock)) {
-    return "You win!";
+    return "You win! 🥳";
   } else {
-    return "You Lose!";
+    return "You Lose! 🥺";
   }
 }
 
@@ -45,15 +52,22 @@ class _RPSGameState extends State<RPSGame> {
   var paper = Emoji('paper', '🖐️');
   var rock = Emoji('rock', '✊');
   var scissors = Emoji('scissors', '✌');
-  var tie = Emoji('tie', '🤝');
-  var win = Emoji('win', '🥳');
-  var lose = Emoji('lose', '🥺');
   var question = Emoji('question', '❓');
+  var restart = Emoji('restart', '🔄');
+  int _playerScore = 0;
+  int _computerScore = 0;
 
   // Fucntion to when he click a choice
   void playGame(Move playerChoice) {
     final computerChoice = getRandomMove();
     final outcome = getOutcome(playerChoice, computerChoice);
+
+    // Update scores based on outcome
+    if (outcome == "You win! 🥳") {
+      _playerScore++;
+    } else if (outcome == "You Lose! 🥺") {
+      _computerScore++;
+    }
 
     setState(() {
       _playerMove = playerChoice;
@@ -68,6 +82,8 @@ class _RPSGameState extends State<RPSGame> {
       _playerMove = null;
       _computerMove = null;
       _resultMessage = 'Make your Move!';
+      _computerScore = 0;
+      _playerScore = 0;
     });
   }
 
@@ -87,21 +103,21 @@ class _RPSGameState extends State<RPSGame> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '$_playerName: ${_playerMove?.name ?? question.code}',
+                  '$_playerName: ${_playerMove?.symbol ?? question.code}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
                 Text(
-                  '$_computerName: ${_computerMove?.name ?? question.code}',
+                  '$_computerName: ${_computerMove?.symbol ?? question.code}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 50),
                 Text(
                   _resultMessage,
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 20),
                 // Buttons for the moves
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -147,8 +163,39 @@ class _RPSGameState extends State<RPSGame> {
                         style: TextStyle(fontSize: 40),
                       ),
                     ),
-                    SizedBox(height: 40),
                   ],
+                ),
+                SizedBox(height: 40),
+                // Display Scores below the buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Your score: $_playerScore',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 30),
+                    Text(
+                      'Computer score: $_computerScore',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: _resetGame,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0x00000000),
+                    foregroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  child: Text(restart.code, style: TextStyle(fontSize: 30)),
                 ),
               ],
             ),

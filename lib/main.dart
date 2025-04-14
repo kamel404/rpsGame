@@ -19,15 +19,24 @@ enum Move {
   const Move(this.symbol);
 }
 
+enum Outcome {
+  win('You win! 🥳'),
+  lose('You Lose! 🥺'),
+  tie('It\'s a tie! 🤝');
+
+  final String message;
+  const Outcome(this.message);
+}
+
 // Fucntion to get the result(outcome) of the game
 String getOutcome(Move player, Move computer) {
-  if (player == computer) return "It's a tie! 🤝";
+  if (player == computer) return Outcome.tie.message;
   if ((player == Move.rock && computer == Move.scissors) ||
       (player == Move.scissors && computer == Move.paper) ||
       (player == Move.paper && computer == Move.rock)) {
-    return "You win! 🥳";
+    return Outcome.win.message;
   } else {
-    return "You Lose! 🥺";
+    return Outcome.lose.message;
   }
 }
 
@@ -49,9 +58,6 @@ class _RPSGameState extends State<RPSGame> {
   String _resultMessage = 'Make your Move!';
   final String _playerName = 'You';
   final String _computerName = 'Computer';
-  var paper = Emoji('paper', '🖐️');
-  var rock = Emoji('rock', '✊');
-  var scissors = Emoji('scissors', '✌');
   var question = Emoji('question', '❓');
   var restart = Emoji('restart', '🔄');
   int _playerScore = 0;
@@ -63,9 +69,9 @@ class _RPSGameState extends State<RPSGame> {
     final outcome = getOutcome(playerChoice, computerChoice);
 
     // Update scores based on outcome
-    if (outcome == "You win! 🥳") {
+    if (outcome == Outcome.win.message) {
       _playerScore++;
-    } else if (outcome == "You Lose! 🥺") {
+    } else if (outcome == Outcome.lose.message) {
       _computerScore++;
     }
 
@@ -132,7 +138,11 @@ class _RPSGameState extends State<RPSGame> {
                           horizontal: 20,
                         ),
                       ),
-                      child: Text(rock.code, style: TextStyle(fontSize: 40)),
+                      child: Image.asset(
+                        'images/rock.png',
+                        width: 70,
+                        height: 70,
+                      ),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
@@ -145,7 +155,11 @@ class _RPSGameState extends State<RPSGame> {
                           horizontal: 20,
                         ),
                       ),
-                      child: Text(paper.code, style: TextStyle(fontSize: 40)),
+                      child: Image.asset(
+                        'images/paper.png',
+                        width: 70,
+                        height: 70,
+                      ),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
@@ -158,9 +172,10 @@ class _RPSGameState extends State<RPSGame> {
                           horizontal: 20,
                         ),
                       ),
-                      child: Text(
-                        scissors.code,
-                        style: TextStyle(fontSize: 40),
+                      child: Image.asset(
+                        'images/scissors.png',
+                        width: 70,
+                        height: 70,
                       ),
                     ),
                   ],
